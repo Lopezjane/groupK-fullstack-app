@@ -177,8 +177,9 @@ async function create(params) {
 
     const account = new db.Account(params);
     account.verified = Date.now();
-    account.status = account.status || 'Inactive';
-    account.role = account.role || Role.User;
+    account.verificationToken = null;
+    account.status = params.status || 'Active';
+    account.role = params.role || Role.User;
     account.passwordHash = await hash(params.password);
     await account.save();
     return basicDetails(account);
