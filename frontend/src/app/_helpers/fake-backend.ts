@@ -56,9 +56,26 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function authenticate() {
             const { email, password } = body;
-            const account = accounts.find(x => x.email === email && x.password === password && x.isVerified);
+            const account = accounts.find(x => x.email === email);
 
-            if (!account) return error('Email or password is incorrect');
+            if (!account) return error('Email does not exist');
+            if (!account.isVerified) {
+                setTimeout(() => {
+                    const verifyUrl = `${location.origin}/account/verify-email?token=${account.verificationToken}`;
+                    alertService.info(
+                        `<h4>Account Not Verified</h4>
+                        <p>Please verify your email address to continue:</p>
+                        <p><a href="${verifyUrl}">${verifyUrl}</a></p>`,
+                        { autoClose: false }
+                    );
+                }, 1000);
+                return error('Account not verified');
+            }
+            if (account.status === 'Inactive') {
+                return error('Your account is inactive. Please contact an administrator to activate your account.');
+            }
+            if (account.password !== password) return error('Password is incorrect');
+
             // add refresh token to account
             account.refreshTokens.push(generateRefreshToken());
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
@@ -120,33 +137,45 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
 
             account.id = newAccountId();
-            if (account.id === 1) {
-                account.role = Role.Admin;
-            }
-            else {
-                account.role = Role.User;
-            }
             account.dateCreated = new Date().toISOString();
             account.verificationToken = new Date().getTime().toString();
-            account.isVerified = false;
             account.refreshTokens = [];
             delete account.confirmPassword;
-            accounts.push(account);
-            localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
+            if (account.id === 1) {
+                // First user is Admin
+                account.role = Role.Admin;
+                account.isVerified = true;
+                account.status = 'Active';
+                accounts.push(account);
+                localStorage.setItem(accountsKey, JSON.stringify(accounts));
+                
+                // Show simple success message for admin
+                setTimeout(() => {
+                    alertService.success('Registration successful! You can now log in.', { autoClose: true });
+                }, 1000);
+            } else {
+                // Regular users
+                account.role = Role.User;
+                account.isVerified = false;
+                account.status = 'Inactive';
+                accounts.push(account);
+                localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
-            // display verification email in alert
-            setTimeout(() => {
-                const verifyUrl = `${location.origin}/account/verify-email?token=${account.verificationToken}`;
-                alertService.info(
-                    `<h4>Verification Email</h4>
-                <p>Thanks for registering!</p>
-                <p>Please click the below link to verify your email address:</p>
-                <p><a href="${verifyUrl}">${verifyUrl}</a></p>
-                <div><strong>NOTE:</strong> The fake backend displayed this "email" so you can test without an api. A real backend would send a real email.</div>`,
-                    { autoClose: false }
-                );
-            }, 1000);
+                // Show verification email for regular users
+                setTimeout(() => {
+                    const verifyUrl = `${location.origin}/account/verify-email?token=${account.verificationToken}`;
+                    alertService.info(
+                        `<h4>Verification Email</h4>
+                    <p>Thanks for registering!</p>
+                    <p>Please click the below link to verify your email address:</p>
+                    <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+                    <p>After verification, please wait for an administrator to activate your account before you can log in.</p>
+                    <div><strong>NOTE:</strong> The fake backend displayed this "email" so you can test without an api. A real backend would send a real email.</div>`,
+                        { autoClose: false }
+                    );
+                }, 1000);
+            }
 
             return ok();
         }
@@ -158,7 +187,19 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             if (!account) return error('Verification failed');
 
             account.isVerified = true;
+            // Don't automatically activate the account
+            // account.status = 'Active';
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
+
+            // Show message that admin needs to activate
+            setTimeout(() => {
+                alertService.info(
+                    `<h4>Email Verified</h4>
+                    <p>Your email has been verified successfully.</p>
+                    <p>Please wait for an administrator to activate your account before you can log in.</p>`,
+                    { autoClose: false }
+                );
+            }, 1000);
 
             return ok();
         }
@@ -247,31 +288,50 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             account.id = newAccountId();
             account.dateCreated = new Date().toISOString();
-            account.isVerified = true;
+            account.role = Role.User;
+            account.isVerified = false;
+            account.status = 'Inactive';
             account.refreshTokens = [];
             delete account.confirmPassword;
             accounts.push(account);
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
+            // Show verification email for new accounts
+            setTimeout(() => {
+                const verifyUrl = `${location.origin}/account/verify-email?token=${account.verificationToken}`;
+                alertService.info(
+                    `<h4>Verification Email</h4>
+                <p>Account created successfully!</p>
+                <p>Please click the below link to verify the email address:</p>
+                <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+                <div><strong>NOTE:</strong> The fake backend displayed this "email" so you can test without an api. A real backend would send a real email.</div>`,
+                    { autoClose: false }
+                );
+            }, 1000);
+
             return ok();
         }
 
         function updateAccount() {
-            if (!isAuthorized(Role.Admin)) return unauthorized();
+            if (!isAuthenticated()) return unauthorized();
 
             const params = body;
             let account = accounts.find(x => x.id === idFromUrl());
 
-            if (account.id !== currentAccount() && !isAuthorized(Role.Admin)) {
+            if (account.id !== currentAccount().id && !isAuthorized(Role.Admin)) {
                 return unauthorized();
             }
 
+            // Only update password if it's provided and not empty
             if (params.password) {
-                delete params.password;
+                account.password = params.password;
             }
 
+            // Remove password and confirmPassword from params to avoid overwriting
+            delete params.password;
             delete params.confirmPassword;
 
+            // Update other fields
             Object.assign(account, params);
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
@@ -312,8 +372,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
 
         function basicDetails(account) {
-            const { id, title, firstName, lastName, email, role, dateCreated, isVerified } = account;
-            return { id, title, firstName, lastName, email, role, dateCreated, isVerified };
+            const { id, title, firstName, lastName, email, role, dateCreated, isVerified, status } = account;
+            return { id, title, firstName, lastName, email, role, dateCreated, isVerified, status };
         }
 
         function isAuthenticated() {

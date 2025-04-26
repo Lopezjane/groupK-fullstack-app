@@ -63,6 +63,18 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select formControlName="status" class="form-select" [ngClass]="{ 'is-invalid': submitted && f.status.errors }">
+                            <option value=""></option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Status is required</div>
+                        </div>
+                    </div>
+
                     <div *ngIf="!isAddMode" class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i> Leave password fields blank to keep the same password
                     </div>

@@ -12,7 +12,6 @@ export class UpdateComponent implements OnInit {
     form: UntypedFormGroup;
     loading = false;
     submitted = false;
-    deleting = false;
 
     constructor(
         private formBuilder: UntypedFormBuilder,
@@ -65,16 +64,5 @@ export class UpdateComponent implements OnInit {
                     this.loading = false;
                 }
             });
-    }
-
-    onDelete() {
-        if (confirm('Are you sure you want to delete your account?')) {
-            this.deleting = true;
-            this.accountService.delete(this.account.id)
-                .pipe(first())
-                .subscribe(() => {
-                    this.alertService.success('Account deleted successfully', { keepAfterRouteChange: true });
-                });
-        }
     }
 }

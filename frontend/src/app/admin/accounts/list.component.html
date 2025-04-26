@@ -30,6 +30,7 @@
                         <th class="border-top-0">User</th>
                         <th class="border-top-0">Email</th>
                         <th class="border-top-0">Role</th>
+                        <th class="border-top-0">Status</th>
                         <th class="border-top-0 text-end">Actions</th>
                     </tr>
                 </thead>
@@ -53,14 +54,16 @@
                                 {{account?.role}}
                             </span>
                         </td>
+                        <td>
+                            <span class="badge text-white" [ngClass]="{'bg-success': account?.status === 'Active', 'bg-warning': account?.status === 'Inactive'}">
+                                <i class="fas" [ngClass]="{'fa-check-circle': account?.status === 'Active', 'fa-clock': account?.status === 'Inactive'}"></i>
+                                {{account?.status}}
+                            </span>
+                        </td>
                         <td class="text-end">
-                            <a routerLink="edit/{{account?.id}}" class="btn btn-sm btn-outline-primary me-1" title="Edit Account">
+                            <a routerLink="edit/{{account?.id}}" class="btn btn-sm btn-outline-primary" title="Edit Account">
                                 <i class="fas fa-user-edit"></i>
                             </a>
-                            <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-outline-danger" [disabled]="account.isDeleting" title="Delete Account">
-                                <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
-                                <i *ngIf="!account.isDeleting" class="fas fa-user-times"></i>
-                            </button>
                         </td>
                     </tr>
                     <tr *ngIf="loading">

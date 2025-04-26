@@ -24,22 +24,4 @@ export class ListComponent implements OnInit {
                 }
             });
     }
-
-    deleteAccount(id: string) {
-        const account = this.accounts.find(x => x.id === id);
-        if (!account) return;
-        
-        account.isDeleting = true;
-        this.accountService.delete(id)
-            .pipe(first())
-            .subscribe({
-                next: () => {
-                    this.accounts = this.accounts.filter(x => x.id !== id);
-                },
-                error: error => {
-                    console.error('Error deleting account:', error);
-                    account.isDeleting = false;
-                }
-            });
-    }
 }
