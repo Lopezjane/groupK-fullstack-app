@@ -7,6 +7,18 @@
         <div class="mb-3">
             <strong>Email:</strong> {{account.email}}
         </div>
+        <div class="mb-3">
+            <strong>Role:</strong> 
+            <span class="badge" [ngClass]="{'bg-primary': account.role === 'Admin', 'bg-secondary': account.role === 'User'}">
+                {{account.role}}
+            </span>
+        </div>
+        <div class="mb-3">
+            <strong>Status:</strong> 
+            <span class="badge" [ngClass]="{'bg-success': account.status === 'Active', 'bg-warning': account.status === 'Inactive'}">
+                {{account.status}}
+            </span>
+        </div>
         <div class="mt-4">
             <a routerLink="update" class="btn btn-primary">
                 <i class="fas fa-edit me-2"></i>Update Profile
