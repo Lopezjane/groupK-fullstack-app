@@ -63,7 +63,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3" *ngIf="!isAddMode">
                         <label class="form-label">Status</label>
                         <select formControlName="status" class="form-select" [ngClass]="{ 'is-invalid': submitted && f.status.errors }">
                             <option value=""></option>
