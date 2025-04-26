@@ -289,24 +289,16 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             account.id = newAccountId();
             account.dateCreated = new Date().toISOString();
             account.role = Role.User;
-            account.isVerified = false;
+            account.isVerified = true;
             account.status = 'Inactive';
             account.refreshTokens = [];
             delete account.confirmPassword;
             accounts.push(account);
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
-            // Show verification email for new accounts
+            // Show success message for admin-created accounts
             setTimeout(() => {
-                const verifyUrl = `${location.origin}/account/verify-email?token=${account.verificationToken}`;
-                alertService.info(
-                    `<h4>Verification Email</h4>
-                <p>Account created successfully!</p>
-                <p>Please click the below link to verify the email address:</p>
-                <p><a href="${verifyUrl}">${verifyUrl}</a></p>
-                <div><strong>NOTE:</strong> The fake backend displayed this "email" so you can test without an api. A real backend would send a real email.</div>`,
-                    { autoClose: false }
-                );
+                alertService.success('Account created successfully! The account is verified but inactive.', { autoClose: true });
             }, 1000);
 
             return ok();
