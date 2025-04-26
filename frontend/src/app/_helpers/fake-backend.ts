@@ -187,18 +187,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             if (!account) return error('Verification failed');
 
             account.isVerified = true;
-            // Don't automatically activate the account
-            // account.status = 'Active';
+            account.status = 'Active';
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
-            // Show message that admin needs to activate
+            // Show success message
             setTimeout(() => {
-                alertService.info(
-                    `<h4>Email Verified</h4>
-                    <p>Your email has been verified successfully.</p>
-                    <p>Please wait for an administrator to activate your account before you can log in.</p>`,
-                    { autoClose: false }
-                );
+                alertService.success('Email verified successfully! Your account is now active and you can log in.', { autoClose: true });
             }, 1000);
 
             return ok();
@@ -290,7 +284,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             account.dateCreated = new Date().toISOString();
             account.role = Role.User;
             account.isVerified = true;
-            account.status = 'Inactive';
+            account.status = 'Active';
             account.refreshTokens = [];
             delete account.confirmPassword;
             accounts.push(account);
@@ -298,7 +292,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             // Show success message for admin-created accounts
             setTimeout(() => {
-                alertService.success('Account created successfully! The account is verified but inactive.', { autoClose: true });
+                alertService.success('Account created successfully! The account is verified and active.', { autoClose: true });
             }, 1000);
 
             return ok();

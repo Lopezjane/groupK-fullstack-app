@@ -26,16 +26,22 @@ export class AddEditComponent implements OnInit {
         this.id = this.route.snapshot.params['id'];
         this.isAddMode = !this.id;
         
-        this.form = this.formBuilder.group({
+        const formControls = {
             title: ['', Validators.required],
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             role: ['', Validators.required],
-            status: ['Inactive', Validators.required],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
             confirmPassword: ['']
-        });
+        };
+
+        // Only add status field for edit mode
+        if (!this.isAddMode) {
+            formControls['status'] = ['Inactive', Validators.required];
+        }
+
+        this.form = this.formBuilder.group(formControls);
 
         if (!this.isAddMode) {
             this.accountService.getById(this.id)
