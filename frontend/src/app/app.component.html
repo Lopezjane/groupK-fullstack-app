@@ -1,0 +1,48 @@
+<div class="app-container" [ngClass]="{ 'bg-light': account }">
+    <!-- main nav -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" *ngIf="account">
+      <div class="container">
+        <a class="navbar-brand" href="#">User Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+                <i class="fas fa-home me-1"></i> Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a routerLink="/profile" routerLinkActive="active" class="nav-link">
+                <i class="fas fa-user me-1"></i> Profile
+              </a>
+            </li>
+            <li class="nav-item" *ngIf="account.role === Role.Admin">
+              <a routerLink="/admin" routerLinkActive="active" class="nav-link">
+                <i class="fas fa-cog me-1"></i> Admin
+              </a>
+            </li>
+            <li class="nav-item">
+              <a (click)="logout()" class="nav-link logout-link">
+                <i class="fas fa-sign-out-alt me-1"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  
+    <!-- subnav router outlet -->
+    <router-outlet name="subnav"></router-outlet>
+  
+    <!-- global alert -->
+    <alert></alert>
+  
+    <!-- main router outlet -->
+    <div class="container mt-4">
+      <router-outlet></router-outlet>
+    </div>
+</div>
+  

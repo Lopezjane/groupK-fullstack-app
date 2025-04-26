@@ -1,0 +1,19 @@
+{
+  "database": {
+      "host": "localhost",
+      "port": 3306,
+      "user": "root",
+      "password": "",
+      "database": "BoilerplateAPI"
+  },
+  "secret": "STARTTLS",
+  "emailFrom": "info@node-mysql-signup-verification-api.com",
+  "smtpOptions": {
+      "host": "smtp.ethereal.email",
+      "port": 587,
+      "auth": {
+          "user": "garfield.connelly96@ethereal.email",
+          "pass": "hd2bxQuGEC1ZFDCkh3"
+      }
+  }
+}

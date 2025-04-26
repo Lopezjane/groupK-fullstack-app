@@ -1,0 +1,54 @@
+<div class="text-center mb-4">
+  <h2 class="text-primary">Login</h2>
+  <p class="text-muted">Enter your credentials to access your account</p>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label class="d-flex justify-content-between">
+      <span>Email</span>
+      <a routerLink="../forgot-password" class="small text-primary">Forgot password?</a>
+    </label>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+      </div>
+      <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" placeholder="Enter your email" />
+    </div>
+    <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+      <div *ngIf="f.email.errors.required">Email is required</div>
+      <div *ngIf="f.email.errors.email">Email is invalid</div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label>Password</label>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+      </div>
+      <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" placeholder="Enter your password" />
+    </div>
+    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+      <div *ngIf="f.password.errors.required">Password is required</div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" formControlName="rememberMe" class="custom-control-input" id="rememberMe">
+      <label class="custom-control-label" for="rememberMe">Remember me</label>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <button [disabled]="loading" class="btn btn-primary btn-block">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+      Sign In
+    </button>
+  </div>
+  
+  <div class="text-center mt-4">
+    <p>Don't have an account? <a routerLink="../register" class="text-primary">Register now</a></p>
+  </div>
+</form>
