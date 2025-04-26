@@ -14,8 +14,8 @@
             </div>
             <div class="col-auto">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search accounts...">
-                    <button class="btn btn-outline-secondary" type="button">
+                    <input type="text" class="form-control" placeholder="Search accounts..." #searchBox (input)="onSearch(searchBox.value)">
+                    <button class="btn btn-outline-secondary" type="button" (click)="onSearch(searchBox.value)">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -28,6 +28,7 @@
                 <thead>
                     <tr>
                         <th class="border-top-0">User</th>
+                        <th class="border-top-0">First Name</th>
                         <th class="border-top-0">Email</th>
                         <th class="border-top-0">Role</th>
                         <th class="border-top-0">Status</th>
@@ -35,7 +36,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let account of accounts">
+                    <tr *ngFor="let account of filteredAccounts">
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3 text-white" style="width: 40px; height: 40px; font-weight: 600;">
@@ -47,6 +48,7 @@
                                 </div>
                             </div>
                         </td>
+                        <td>{{account?.firstName}}</td>
                         <td>{{account?.email}}</td>
                         <td>
                             <span class="badge text-white" [ngClass]="{'bg-primary': account?.role === 'Admin', 'bg-secondary': account?.role === 'User'}">
@@ -61,7 +63,7 @@
                             </span>
                         </td>
                         <td class="text-end">
-                            <a routerLink="edit/{{account?.id}}" class="btn btn-sm btn-outline-primary" title="Edit Account">
+                            <a [routerLink]="['edit', account.id]" class="btn btn-sm btn-outline-primary" title="Edit Account">
                                 <i class="fas fa-user-edit"></i>
                             </a>
                         </td>
@@ -74,7 +76,7 @@
                             <p class="mt-2 mb-0">Loading accounts...</p>
                         </td>
                     </tr>
-                    <tr *ngIf="!loading && accounts?.length === 0">
+                    <tr *ngIf="!loading && filteredAccounts?.length === 0">
                         <td colspan="4" class="text-center py-4">
                             <div class="text-muted">
                                 <i class="fas fa-users fa-4x mb-3"></i>
