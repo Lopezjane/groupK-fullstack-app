@@ -256,28 +256,90 @@ async function sendVerificationEmail(account, origin) {
     let message;
     if (origin) {
         const verifyUrl = `${origin}/account/verify-email?token=${account.verificationToken}`;
-        message = `<p>Please click the below link to verify your email address</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`;
+        message = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <p>Hello ${account.firstName},</p>
+                <p>Thank you for registering with User-Management! To complete your registration, please verify your email address by clicking the button below:</p>
+                <p style="margin: 25px 0;">
+                    <a href="${verifyUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">Verify Email Address</a>
+                </p>
+                <p>If the button above doesn't work, you can also click on the link below or copy it into your browser:</p>
+                <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+                <p>This link will expire in 24 hours.</p>
+                <p>Best regards,<br>The User-Management Team</p>
+            </div>
+        `;
     } else {
-        message = `<p>Please use the below token to verify your email address with the <code>/account/verify-email</code> api route</p><p><code>${account.verificationToken}</code></p>`;
+        message = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <p>Hello ${account.firstName},</p>
+                <p>Thank you for registering with User-Management!</p>
+                <p>Please use the below token to verify your email address with the <code>/account/verify-email</code> api route:</p>
+                <p style="background-color: #f5f5f5; padding: 10px; border-radius: 4px; font-family: monospace;">${account.verificationToken}</p>
+                <p>Best regards,<br>The User-Management Team</p>
+            </div>
+        `;
     }
     await sendEmail({
         to: account.email,
-        subject: 'Sign-up Verification API - Verify Email',
-        html: `<h4>Verify Email</h4><p>Thanks for registering!</p>${message}`
+        subject: 'User-Management - Verify Your Email Address',
+        html: `
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #2c3e50; padding: 20px; text-align: center;">
+                    <h2 style="color: #ffffff; margin: 0;">User-Management</h2>
+                </div>
+                ${message}
+                <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #666666;">
+                    <p>This is an automated email, please do not reply to this message.</p>
+                    <p>&copy; ${new Date().getFullYear()} User-Management. All rights reserved.</p>
+                </div>
+            </div>
+        `
     });
 }
 
 async function sendAlreadyRegisteredEmail(email, origin) {
     let message;
     if (origin) {
-        message = `<p>If you don't know your password please visit the <a href="${origin}/account/forgot-password">forgot password</a> page.</p>`;
+        message = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <p>Hello there,</p>
+                <p>Someone (hopefully you) has attempted to register a new account using this email address.</p>
+                <p>However, this email address is already registered in our system.</p>
+                <p>If you've forgotten your password, you can reset it by clicking the button below:</p>
+                <p style="margin: 25px 0;">
+                    <a href="${origin}/account/forgot-password" style="background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">Reset Password</a>
+                </p>
+                <p>If you did not attempt to register, please ignore this email or contact support if you have concerns.</p>
+                <p>Best regards,<br>The User-Management Team</p>
+            </div>
+        `;
     } else {
-        message = `<p>If you don't know your password you can reset it via the <code>/account/forgot-password</code> api route.</p>`;
+        message = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <p>Hello there,</p>
+                <p>Someone (hopefully you) has attempted to register a new account using this email address.</p>
+                <p>However, this email address is already registered in our system.</p>
+                <p>If you've forgotten your password, you can reset it via the <code>/account/forgot-password</code> api route.</p>
+                <p>Best regards,<br>The User-Management Team</p>
+            </div>
+        `;
     }
     await sendEmail({
         to: email,
-        subject: 'Sign-up Verification API - Email Already Registered',
-        html: `<h4>Verify Email</h4><p>Your email <strong>${email}</strong> is already registered.</p>${message}`
+        subject: 'User-Management - Email Already Registered',
+        html: `
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #2c3e50; padding: 20px; text-align: center;">
+                    <h2 style="color: #ffffff; margin: 0;">User-Management</h2>
+                </div>
+                ${message}
+                <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #666666;">
+                    <p>This is an automated email, please do not reply to this message.</p>
+                    <p>&copy; ${new Date().getFullYear()} User-Management. All rights reserved.</p>
+                </div>
+            </div>
+        `
     });
 }
 
@@ -285,13 +347,61 @@ async function sendPasswordResetEmail(account, origin) {
     let message;
     if (origin) {
         const resetUrl = `${origin}/account/reset-password?token=${account.resetToken}`;
-        message = `<p>Please click the below link to reset your password, the link will be valid for 1 day!</p><p><a href="${resetUrl}">${resetUrl}</a></p>`;
+        message = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <p>Hello ${account.firstName},</p>
+                <p>You recently requested to reset your password for your User-Management account.</p>
+                <p>To secure your account, please use the secure link below to create a new password:</p>
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 30px auto;">
+                    <tr>
+                        <td align="center" style="border-radius: 4px;" bgcolor="#4285f4">
+                            <a href="${resetUrl}" target="_blank" style="border: solid 1px #4285f4; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #4285f4; border-color: #4285f4; color: #ffffff;">Reset Password Securely</a>
+                        </td>
+                    </tr>
+                </table>
+                <p>For security reasons, this link will expire in 24 hours.</p>
+                <p>If you didn't request this password change, you can ignore this message and your password will remain the same.</p>
+                <p>For account security, please:</p>
+                <ul>
+                    <li>Never share your password with anyone</li>
+                    <li>Create a unique password you don't use for other websites</li>
+                    <li>Include a mix of letters, numbers, and symbols in your password</li>
+                </ul>
+                <p>Best regards,<br>The User-Management Team</p>
+                <p style="font-size: 12px; color: #777777; margin-top: 30px;">
+                    Note: This is an automated message sent to ${account.email} in response to a password reset request for your User-Management account.
+                    If you're concerned about the authenticity of this message, please access the User-Management site directly instead of clicking any links.
+                </p>
+            </div>
+        `;
     } else {
-        message = `<p>Please use the below token to reset your password with the <code>/account/reset-password</code> api route</p><p><code>${account.resetToken}</code></p>`;
+        message = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <p>Hello ${account.firstName},</p>
+                <p>You recently requested to reset your password for your User-Management account.</p>
+                <p>Please use the below security token to reset your password:</p>
+                <p style="background-color: #f5f5f5; padding: 10px; border-radius: 4px; font-family: monospace;">${account.resetToken}</p>
+                <p>This token is only valid for the next 24 hours.</p>
+                <p>If you did not request a password reset, please ignore this email.</p>
+                <p>Best regards,<br>The User-Management Team</p>
+            </div>
+        `;
     }
     await sendEmail({
         to: account.email,
-        subject: 'Sign-up Verification API - Reset Password',
-        html: `<h4>Reset Password</h4>${message}`
+        subject: 'Security Alert: Password Reset Request for User-Management Account',
+        html: `
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #2c3e50; padding: 20px; text-align: center;">
+                    <h2 style="color: #ffffff; margin: 0;">User-Management Security</h2>
+                </div>
+                ${message}
+                <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #666666;">
+                    <p>This is an automated security notification from User-Management.</p>
+                    <p>Please do not reply to this message as the mailbox is not monitored.</p>
+                    <p>&copy; ${new Date().getFullYear()} User-Management. All rights reserved.</p>
+                </div>
+            </div>
+        `
     });
 }

@@ -7,13 +7,21 @@
       "database": "BoilerplateAPI"
   },
   "secret": "STARTTLS",
-  "emailFrom": "info@node-mysql-signup-verification-api.com",
+  "emailFrom": "froillan.edem@gmail.com",
   "smtpOptions": {
-      "host": "smtp.ethereal.email",
-      "port": 587,
+      "host": "smtp.gmail.com",
+      "port": 465,
+      "secure": true,
       "auth": {
-          "user": "mae40@ethereal.email",
-          "pass": "XYQxwuvaEepMjuQ6jz"
-      }
+          "user": "froillan.edem@gmail.com",
+          "pass": "dgzy rvyz prks zslp"
+      },
+      "tls": {
+          "rejectUnauthorized": false
+      },
+      "debug": true,
+      "logger": true,
+      "disableFileAccess": true,
+      "disableUrlAccess": true
   }
 }
