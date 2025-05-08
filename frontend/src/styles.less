@@ -4,10 +4,26 @@ a {
   text-decoration: none;
 }
 
+:root {
+  --primary: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --primary-light: #ddd6fe;
+  --secondary: #a78bfa;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --light: #f5f3ff;
+  --dark: #4c1d95;
+  --body-bg: #f9fafb;
+  --text-color: #4b5563;
+  --border-color: #e2e8f0;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  background-color: #f8f9fa;
+  color: var(--text-color);
+  background-color: var(--body-bg);
 }
 
 .app-container {
@@ -46,13 +62,13 @@ body {
 }
 
 .btn-primary {
-  background-color: #3f51b5;
-  border-color: #3f51b5;
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
 .btn-primary:hover {
-  background-color: #303f9f;
-  border-color: #303f9f;
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 // Card styling
@@ -74,11 +90,15 @@ body {
 }
 
 .bg-primary {
-  background-color: #3f51b5 !important;
+  background-color: var(--primary) !important;
 }
 
 .bg-secondary {
-  background-color: #6c757d !important;
+  background-color: var(--secondary) !important;
+}
+
+.text-primary {
+  color: var(--primary) !important;
 }
 
 // Table styling

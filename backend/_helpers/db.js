@@ -1,50 +1,53 @@
 const config = require('../config.json');
-const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
 
 module.exports = db = {};
+
+// Determine which environment config to use
+const env = process.env.NODE_ENV || 'development';
+const envConfig = config[env];
+
+if (!envConfig) {
+    console.error(`No configuration found for environment: ${env}`);
+    process.exit(1);
+}
 
 initialize();
 
 async function initialize() {
     try {
-        const { host, port, user, password, database } = config.database;
+        const { dialect, host, port, user, password, database } = envConfig.database;
         
-        // 1. First test basic connection
-        const connection = await mysql.createConnection({ 
-            host, 
-            port, 
-            user, 
-            password,
-            insecureAuth: true // Add if using older MySQL auth
-        });
+        console.log(`Connecting to PostgreSQL database at ${host}:${port}/${database}`);
         
-        // 2. Create database if needed
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
-        await connection.end();
-
-        // 3. Connect Sequelize
+        // Connect to PostgreSQL using Sequelize
         const sequelize = new Sequelize(database, user, password, { 
             host,
-            dialect: 'mysql',
+            port,
+            dialect: dialect || 'postgres',
             dialectOptions: {
-                connectTimeout: 10000
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
             },
             logging: console.log // Enable to see SQL queries
         });
 
-        // 4. Initialize models
+        // Initialize models
         db.Account = require('../accounts/account.model')(sequelize);
         db.RefreshToken = require('../accounts/refresh-token.model')(sequelize);
 
-        // 5. Setup relationships
+        // Setup relationships
         db.Account.hasMany(db.RefreshToken, { onDelete: 'CASCADE' });
         db.RefreshToken.belongsTo(db.Account);
 
-        // 6. Sync models
+        // Sync models - create tables if they don't exist
         await sequelize.authenticate();
+        console.log('Connected to PostgreSQL database successfully.');
+        
         await sequelize.sync({ alter: true });
-        console.log('Database synchronized');
+        console.log('Database schema synchronized');
         
     } catch (err) {
         console.error('Database initialization failed:', err);

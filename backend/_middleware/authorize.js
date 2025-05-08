@@ -1,6 +1,19 @@
 const { expressjwt: jwt } = require("express-jwt");
-const { secret } = require('../config.json');
+const config = require('../config.json');
 const db = require('../_helpers/db');
+
+// Get the environment-specific configuration
+const env = process.env.NODE_ENV || 'development';
+const envConfig = config[env];
+
+// Check if config exists for the current environment
+if (!envConfig) {
+    console.error(`No configuration found for environment: ${env}`);
+    process.exit(1);
+}
+
+// Get the secret from the correct environment config
+const { secret } = envConfig;
 
 module.exports = authorize;
 

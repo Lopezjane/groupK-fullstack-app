@@ -1,27 +1,58 @@
 {
-  "database": {
-      "host": "localhost",
-      "port": 3306,
-      "user": "root",
-      "password": "",
-      "database": "BoilerplateAPI"
-  },
-  "secret": "STARTTLS",
-  "emailFrom": "froillan.edem@gmail.com",
-  "smtpOptions": {
+  "development": {
+    "database": {
+      "dialect": "postgres",
+      "host": "trolley.proxy.rlwy.net",
+      "port": 35606,
+      "user": "postgres",
+      "password": "BiqmtmJvQPISWyMpiZKhZHJfmyKXwbSu",
+      "database": "railway"
+    },
+    "secret": "STARTTLS",
+    "emailFrom": "daisylynlaygan@gmail.com",
+    "smtpOptions": {
       "host": "smtp.gmail.com",
-      "port": 465,
-      "secure": true,
+      "port": 587,
+      "secure": false,
       "auth": {
-          "user": "froillan.edem@gmail.com",
-          "pass": "dgzy rvyz prks zslp"
+        "user": "daisylynlaygan@gmail.com",
+        "pass": "xrzi ztvz idtm ylec"
       },
       "tls": {
-          "rejectUnauthorized": false
+        "rejectUnauthorized": false
       },
       "debug": true,
       "logger": true,
       "disableFileAccess": true,
       "disableUrlAccess": true
+    }
+  },
+  "production": {
+    "database": {
+      "dialect": "postgres",
+      "host": "trolley.proxy.rlwy.net",
+      "port": 35606,
+      "user": "postgres",
+      "password": "BiqmtmJvQPISWyMpiZKhZHJfmyKXwbSu",
+      "database": "railway"
+    },
+    "secret": "STARTTLS",
+    "emailFrom": "daisylynlaygan@gmail.com",
+    "smtpOptions": {
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "secure": false,
+      "auth": {
+        "user": "daisylynlaygan@gmail.com",
+        "pass": "xrzi ztvz idtm ylec"
+      },
+      "tls": {
+        "rejectUnauthorized": false
+      },
+      "debug": false,
+      "logger": false,
+      "disableFileAccess": true,
+      "disableUrlAccess": true
+    }
   }
 }

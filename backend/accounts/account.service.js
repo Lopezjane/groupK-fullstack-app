@@ -7,6 +7,19 @@ const sendEmail = require('../_helpers/send_email');
 const db = require('../_helpers/db');
 const Role = require('../_helpers/role');
 
+// Get the environment-specific configuration
+const env = process.env.NODE_ENV || 'development';
+const envConfig = config[env];
+
+// Check if config exists for the current environment
+if (!envConfig) {
+    console.error(`No configuration found for environment: ${env}`);
+    process.exit(1);
+}
+
+// Get the secret from the correct environment config
+const { secret } = envConfig;
+
 module.exports = {
     authenticate,
     refreshToken,
@@ -229,7 +242,7 @@ function generateJwtToken(account) {
             id: account.id,
             role: account.role
         },
-        config.secret,
+        secret,
         { expiresIn: '15m' }
     );
 }

@@ -1,11 +1,21 @@
 const nodemailer = require('nodemailer');
 const config = require('config.json');
 
+// Get the environment-specific configuration
+const env = process.env.NODE_ENV || 'development';
+const envConfig = config[env];
+
+// Check if config exists for the current environment
+if (!envConfig) {
+    console.error(`No configuration found for environment: ${env}`);
+    process.exit(1);
+}
+
 module.exports = sendEmail;
 
-async function sendEmail({ to, subject, html, from = config.emailFrom }) {
+async function sendEmail({ to, subject, html, from = envConfig.emailFrom }) {
     try {
-        const transporter = nodemailer.createTransport(config.smtpOptions);
+        const transporter = nodemailer.createTransport(envConfig.smtpOptions);
         
         // Verify connection configuration
         await transporter.verify();
